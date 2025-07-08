@@ -1,0 +1,39 @@
+/* client/src/pages/RegisterPage.css */
+.auth-container {
+  width: 320px;
+  margin: 100px auto;
+  background-color: #f9f9f9;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.auth-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.auth-container input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.auth-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: #222;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.auth-container p {
+  text-align: center;
+  margin-top: 15px;
+}
