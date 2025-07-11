@@ -7,6 +7,7 @@ const proControl = require('../controller/projectcontrol');
 
 // Tokens
 router.get('/tokens/:id', tokencontroller.getTkn);
+router.post('/token',tokencontroller.createTkn);
 
 // Auth
 router.post('/login', userControl.login);
