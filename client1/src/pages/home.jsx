@@ -1,4 +1,5 @@
 import TokenCard from '../components/tokencard';
+import CreateTokenModal from '../components/createTokenModel';
 import '../css/home.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -12,6 +13,8 @@ function Home() {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [tokens, setTokens] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const[memberlist, setMemberlist] = useState([]);
 
   // ✅ Fetch projects for the logged-in user
   useEffect(() => {
@@ -35,9 +38,20 @@ function Home() {
     try {
       const res = await axios.get(`http://localhost:5000/api/tokens/${project.projectid}`);
       setTokens(res.data);
+      const memberRes=await axios.get(`http://localhost:5000/api/members/${project.projectid}`);
+      setMemberlist(memberRes.data);
     } catch (err) {
       console.error("Unable to fetch tokens:", err);
       setTokens([]);
+    }
+  };
+
+  const fetchTokens = async (projectId) => {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/tokens/${projectId}`);
+      setTokens(res.data);
+    } catch (err) {
+      console.error("Unable to fetch tokens:", err);
     }
   };
 
@@ -59,17 +73,44 @@ function Home() {
         </ul>
       </div>
 
-      {/* Center Tokens */}
-      <div className='centerDis'>
+      <div className="centerDis">
         {!selectedProject ? (
-          <button className='createpro' onClick={() => navigate('/project/create')}>
+          <button className="createpro" onClick={() => navigate('/project/create')}>
             Create New Project
           </button>
-        ) : tokens.length > 0 ? (
-          tokens.map((t, idx) => <TokenCard key={idx} token={t} />)
         ) : (
-          <p className='setit'>No tokens in this project</p>
+          <>
+            {/* Button to trigger Create Token Modal */}
+            <div className="top-btn-container">
+              <button className="btn primary-btn" onClick={() => setShowModal(true)}>
+                + Create Token
+              </button>
+            </div>
+            <div className='tokenList'>
+            {/* Token List */}
+            {tokens.length > 0 ? (
+              tokens.map((t, idx) => <TokenCard key={idx} token={t} />)
+            ) : (
+              <p className="setit">No tokens in this project</p>
+            )}</div>
+          </>
         )}
+      </div>
+
+      {/* Create Token Modal (conditionally shown) */}
+      {showModal && selectedProject && (
+        <CreateTokenModal
+          projectId={selectedProject.projectid}
+          onClose={() => {
+            setShowModal(false);
+            fetchTokens(selectedProject.projectid);
+          }}
+        />
+      )}
+      {/* Right Sidebar */}
+      <div className='rightside'>
+        <button className='btn adduser' >+ Add Member</button>
+
       </div>
     </div>
   );

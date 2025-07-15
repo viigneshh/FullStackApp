@@ -29,9 +29,18 @@ function searchUserByMail(email, callback) {
         }
     );
 }
+function getusers(projectid, callback) {
+    db.query( 'select userid from user_v_pro where project_id=?',[projectid],(err, results) => {
+        if (err) {
+            console.log(`Couldn't get users due to: ${err}`);
+            return callback(err, null);
+        }
+        return callback(null, results);
+});}
 
 // Export both functions
 module.exports = {
     createUser,
     searchUserByMail,
+    getusers,
 };

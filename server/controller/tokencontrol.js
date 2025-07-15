@@ -20,3 +20,22 @@ exports.createTkn=(req,res)=>{
         res.status(201).json({ message: 'Token created', tokenId: result.insertId });
     });
 };
+
+exports.getSubcategories = (req, res) => {
+  GetTokens1.getSubcategories((err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to fetch subcategories', details: err });
+    }
+
+    // Map format to include category
+    const mapped = results.map(row => {
+      const parts = row.json.split('.');
+      return {
+        subcategory: row.subcategory,
+        category: parts.length > 1 ? parts[0] : 'unknown'
+      };
+    });
+
+    res.status(200).json(mapped);
+  });
+};

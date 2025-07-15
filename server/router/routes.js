@@ -6,8 +6,10 @@ const userControl = require('../controller/usercontrol');
 const proControl = require('../controller/projectcontrol');
 
 // Tokens
+router.get('/members/:id', userControl.getUsersOfProject);
 router.get('/tokens/:id', tokencontroller.getTkn);
 router.post('/token',tokencontroller.createTkn);
+router.get('/token/subcategories',tokencontroller.getSubcategories);
 
 // Auth
 router.post('/login', userControl.login);

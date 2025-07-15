@@ -8,7 +8,11 @@ const getTokens={
         const{projectid, token_category, token_subcategory, token_value}=data;
         db.query('insert INTO tokens (projectid, token_category, token_subcategory, token_value) values (?,?,?,?)',
             [projectid, token_category, token_subcategory, token_value],callback)
-    }
+    },
+    getSubcategories: (callback) => {
+        const query = 'SELECT subcategory, jsonNested FROM token_export_keywords';
+        db.query(query, callback);
+        }
 };
 
 module.exports=getTokens;
