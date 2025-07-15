@@ -1,10 +1,11 @@
-import TokenCard from '../components/tokencard';
-import CreateTokenModal from '../components/createTokenModel';
-import '../css/home.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useUser } from '../context/userContext';
 import { useNavigate } from 'react-router-dom';
+import TokenCard from '../components/tokencard';
+import CreateTokenModal from '../components/createTokenModel';
+import AddMemberModal from '../components/addmember';
+import '../css/home.css';
 
 function Home() {
   const { user } = useUser();
@@ -14,13 +15,13 @@ function Home() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [tokens, setTokens] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showAddMember, setShowAddMember] = useState(false);
   const [memberlist, setMemberlist] = useState([]);
 
-  // Load user projects
+  // Fetch user projects
   useEffect(() => {
     const loadProjects = async () => {
       if (!user || !user.userid) return;
-
       try {
         const res = await axios.get(`http://localhost:5000/api/user/${user.userid}/projects`);
         setProjects(res.data);
@@ -28,11 +29,10 @@ function Home() {
         console.error("Failed to load projects:", err);
       }
     };
-
     loadProjects();
   }, [user]);
 
-  // Select project and fetch tokens + members
+  // Fetch tokens + members on project select
   const handleProjectSelect = async (project) => {
     setSelectedProject(project);
 
@@ -41,17 +41,7 @@ function Home() {
       const tokenRes = await axios.get(`http://localhost:5000/api/tokens/${project.projectid}`);
       setTokens(tokenRes.data);
 
-      // Fetch member userids
-      const memberRes = await axios.get(`http://localhost:5000/api/members/${project.projectid}`);
-      const userIds = memberRes.data.map(m => m.userid);
-
-      // Fetch each user's full details
-      const memberDetailsPromises = userIds.map(id =>
-        axios.get(`http://localhost:5000/api/member/${id}`).then(res => res.data)
-      );
-
-      const fullMembers = await Promise.all(memberDetailsPromises);
-      setMemberlist(fullMembers);
+      await fetchMembers(project.projectid);
     } catch (err) {
       console.error("Unable to fetch project data:", err);
       setTokens([]);
@@ -59,13 +49,30 @@ function Home() {
     }
   };
 
-  // Reload tokens when a new token is added
+  // Refetch tokens after creation
   const fetchTokens = async (projectId) => {
     try {
       const res = await axios.get(`http://localhost:5000/api/tokens/${projectId}`);
       setTokens(res.data);
     } catch (err) {
       console.error("Unable to fetch tokens:", err);
+    }
+  };
+
+  // Refetch members after addition
+  const fetchMembers = async (projectId) => {
+    try {
+      const memberRes = await axios.get(`http://localhost:5000/api/members/${projectId}`);
+      const userIds = memberRes.data.map(m => m.userid);
+
+      const fullMembers = await Promise.all(
+        userIds.map(id =>
+          axios.get(`http://localhost:5000/api/member/${id}`).then(res => res.data)
+        )
+      );
+      setMemberlist(fullMembers);
+    } catch (err) {
+      console.error("Unable to fetch members:", err);
     }
   };
 
@@ -111,9 +118,9 @@ function Home() {
         )}
       </div>
 
-      {/* Right Sidebar (Members) */}
+      {/* Right Sidebar */}
       <div className='rightside'>
-        <button className='btn adduser'>+ Add Member</button>
+        <button className='btn adduser' onClick={() => setShowAddMember(true)}>+ Add Member</button>
         <h3 className="member-header">Members</h3>
         <ul className="member-list">
           {memberlist.length > 0 ? (
@@ -137,6 +144,15 @@ function Home() {
             setShowModal(false);
             fetchTokens(selectedProject.projectid);
           }}
+        />
+      )}
+
+      {/* Add Member Modal */}
+      {showAddMember && selectedProject && (
+        <AddMemberModal
+          projectId={selectedProject.projectid}
+          onClose={() => setShowAddMember(false)}
+          onMemberAdded={() => fetchMembers(selectedProject.projectid)}
         />
       )}
     </div>

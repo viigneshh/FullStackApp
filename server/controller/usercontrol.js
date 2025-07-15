@@ -1,4 +1,4 @@
-const { createUser, searchUserByMail,getusers,getUserbyId } = require('../model/usermodel');
+const { createUser, searchUserByMail,getusers,getUserbyId,addUserToProject } = require('../model/usermodel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { get } = require('../router/routes');
@@ -88,7 +88,13 @@ const getUserById1 = (req, res) => {
         if (err) return res.status(500).json({ message: 'Database error' });
         if (results.length === 0) { res.status(404).json({ message: 'User not found' }); }
         else { res.status(200).json(results[0]); }    }  );}
-
+const addProject=(req, res) => {
+    const { userid, projectid, role } = req.body;
+    addUserToProject(userid, projectid, role, (err, results) => {
+        if (err) return res.status(500).json({ message: 'Database error' });
+        res.status(201).json({ message: 'User added to project successfully', data: results });
+    });
+}
 
 module.exports = {
     register,
@@ -96,4 +102,5 @@ module.exports = {
     verifyToken,
     getUsersOfProject,
     getUserById1,
+    addProject
 };

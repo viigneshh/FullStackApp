@@ -50,11 +50,25 @@ function getUserbyId(userid, callback) {
         }
     );
 }
+function addUserToProject(userid, projectid, role, callback) {
+    db.query(
+        'INSERT INTO user_v_pro (userid, project_id, role) VALUES (?, ?, ?)',
+        [userid, projectid, role],
+        (err, results) => {
+            if (err) {
+                console.log(`Couldn't add user to project due to: ${err}`);
+                return callback(err, null);
+            }
+            return callback(null, results);
+        }
+    );
+}
 
 // Export both functions
 module.exports = {
     createUser,
     searchUserByMail,
     getusers,
-    getUserbyId
+    getUserbyId,
+    addUserToProject
 };
