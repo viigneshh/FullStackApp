@@ -99,3 +99,45 @@
   font-style: italic;
   margin-top: 20px;
 }
+/* Right Sidebar */
+.rightside {
+  width: 25%;
+  background: #f9fafb;
+  padding: 16px;
+  border-left: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+}
+
+.adduser {
+  background-color: #10b981;
+  color: white;
+  margin-bottom: 12px;
+}
+
+.adduser:hover {
+  background-color: #059669;
+}
+
+.member-header {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.member-list {
+  list-style: none;
+  padding-left: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.member-item {
+  padding: 8px;
+  background-color: #ffffff;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+}

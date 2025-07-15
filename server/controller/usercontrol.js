@@ -1,6 +1,7 @@
-const { createUser, searchUserByMail,getusers } = require('../model/usermodel');
+const { createUser, searchUserByMail,getusers,getUserbyId } = require('../model/usermodel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { get } = require('../router/routes');
 require('dotenv').config();
 
 const register = async (req, res) => {
@@ -81,7 +82,12 @@ const getUsersOfProject = (req, res) => {
         if (results.length === 0) { res.status(404).json({ message: 'No users found for this project' }); }
         else { res.status(200).json(results); }
     }); }
-
+const getUserById1 = (req, res) => {
+    const userId = req.params.id;
+    getUserbyId(userId, (err, results) => {
+        if (err) return res.status(500).json({ message: 'Database error' });
+        if (results.length === 0) { res.status(404).json({ message: 'User not found' }); }
+        else { res.status(200).json(results[0]); }    }  );}
 
 
 module.exports = {
@@ -89,4 +95,5 @@ module.exports = {
     login,
     verifyToken,
     getUsersOfProject,
+    getUserById1,
 };

@@ -37,10 +37,24 @@ function getusers(projectid, callback) {
         }
         return callback(null, results);
 });}
+function getUserbyId(userid, callback) {
+    db.query(
+        'SELECT * FROM users WHERE user_id = ?',
+        [userid],
+        (err, results) => {
+            if (err) {
+                console.log(`Couldn't get user by ID due to: ${err}`);
+                return callback(err, null);
+            }
+            return callback(null, results);
+        }
+    );
+}
 
 // Export both functions
 module.exports = {
     createUser,
     searchUserByMail,
     getusers,
+    getUserbyId
 };
