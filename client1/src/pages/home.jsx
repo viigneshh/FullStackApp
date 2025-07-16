@@ -35,12 +35,9 @@ function Home() {
   // Fetch tokens + members on project select
   const handleProjectSelect = async (project) => {
     setSelectedProject(project);
-
     try {
-      // Fetch tokens
       const tokenRes = await axios.get(`http://localhost:5000/api/tokens/${project.projectid}`);
       setTokens(tokenRes.data);
-
       await fetchMembers(project.projectid);
     } catch (err) {
       console.error("Unable to fetch project data:", err);
@@ -64,7 +61,6 @@ function Home() {
     try {
       const memberRes = await axios.get(`http://localhost:5000/api/members/${projectId}`);
       const userIds = memberRes.data.map(m => m.userid);
-
       const fullMembers = await Promise.all(
         userIds.map(id =>
           axios.get(`http://localhost:5000/api/member/${id}`).then(res => res.data)
@@ -90,7 +86,6 @@ function Home() {
             >
               <p>Name: {pro.projectname}</p>
               <p>Role: {pro.role}</p>
-              
             </li>
           ))}
         </ul>
@@ -122,7 +117,9 @@ function Home() {
 
       {/* Right Sidebar */}
       <div className='rightside'>
-        {selectedProject.role==='Admin'&&<button className='btn adduser' onClick={() => setShowAddMember(true)}>+ Add Member</button>}
+        {selectedProject?.role === 'Admin' && (
+          <button className='btn adduser' onClick={() => setShowAddMember(true)}>+ Add Member</button>
+        )}
         <h3 className="member-header">Members</h3>
         <ul className="member-list">
           {memberlist.length > 0 ? (
