@@ -88,7 +88,9 @@ function Home() {
               className={`project-item ${selectedProject?.projectid === pro.projectid ? 'active' : ''}`}
               onClick={() => handleProjectSelect(pro)}
             >
-              {pro.projectname}
+              <p>Name: {pro.projectname}</p>
+              <p>Role: {pro.role}</p>
+              
             </li>
           ))}
         </ul>
@@ -120,7 +122,7 @@ function Home() {
 
       {/* Right Sidebar */}
       <div className='rightside'>
-        <button className='btn adduser' onClick={() => setShowAddMember(true)}>+ Add Member</button>
+        {selectedProject.role==='Admin'&&<button className='btn adduser' onClick={() => setShowAddMember(true)}>+ Add Member</button>}
         <h3 className="member-header">Members</h3>
         <ul className="member-list">
           {memberlist.length > 0 ? (
