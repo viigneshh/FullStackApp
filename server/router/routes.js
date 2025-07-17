@@ -21,6 +21,7 @@ router.post('/register', userControl.register);
 router.post('/projects', proControl.createProject);
 router.get('/user/:userid/projects', proControl.getProjectsForUser);
 router.get('/verify', userControl.verifyToken);
+router.get('/token/keywords', tokencontroller.getExportKeywords);
 
 
 module.exports = router;

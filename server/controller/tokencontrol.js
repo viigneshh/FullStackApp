@@ -39,3 +39,13 @@ exports.getSubcategories = (req, res) => {
     res.status(200).json(mapped);
   });
 };
+
+
+exports.getExportKeywords = (req, res) => {
+  GetTokens1.getExportKeywords((err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to load export keywords', details: err });
+    }
+    res.status(200).json(results);
+  });
+};

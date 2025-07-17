@@ -7,6 +7,11 @@ import CreateTokenModal from '../components/createTokenModel';
 import AddMemberModal from '../components/addmember';
 import '../css/home.css';
 
+const exportFormats = [
+  "jsonFlat", "cssVar", "cssProp", "scssFlat", "scssMap",
+  "tailwind", "raw", "jsCJS", "jsESM", "jsonNested"
+];
+
 function Home() {
   const { user } = useUser();
   const navigate = useNavigate();
@@ -18,7 +23,11 @@ function Home() {
   const [showAddMember, setShowAddMember] = useState(false);
   const [memberlist, setMemberlist] = useState([]);
 
-  // Fetch user projects
+  const [isExporting, setIsExporting] = useState(false);
+  const [selectedTokens, setSelectedTokens] = useState([]);
+  const [selectedFormat, setSelectedFormat] = useState("");
+  const [exportOutput, setExportOutput] = useState("");
+
   useEffect(() => {
     const loadProjects = async () => {
       if (!user || !user.userid) return;
@@ -32,9 +41,10 @@ function Home() {
     loadProjects();
   }, [user]);
 
-  // Fetch tokens + members on project select
   const handleProjectSelect = async (project) => {
     setSelectedProject(project);
+    setIsExporting(false);
+    setSelectedTokens([]);
     try {
       const tokenRes = await axios.get(`http://localhost:5000/api/tokens/${project.projectid}`);
       setTokens(tokenRes.data);
@@ -46,7 +56,6 @@ function Home() {
     }
   };
 
-  // Refetch tokens after creation
   const fetchTokens = async (projectId) => {
     try {
       const res = await axios.get(`http://localhost:5000/api/tokens/${projectId}`);
@@ -56,7 +65,6 @@ function Home() {
     }
   };
 
-  // Refetch members after addition
   const fetchMembers = async (projectId) => {
     try {
       const memberRes = await axios.get(`http://localhost:5000/api/members/${projectId}`);
@@ -71,6 +79,41 @@ function Home() {
       console.error("Unable to fetch members:", err);
     }
   };
+
+  const toggleTokenSelect = (token) => {
+    const alreadySelected = selectedTokens.find(t => t.tokenid === token.tokenid);
+    if (alreadySelected) {
+      setSelectedTokens(selectedTokens.filter(t => t.tokenid !== token.tokenid));
+    } else {
+      setSelectedTokens([...selectedTokens, token]);
+    }
+  };
+
+  const handleExport = async () => {
+  if (!selectedFormat || selectedTokens.length === 0) return;
+
+  try {
+    // Get mappings from backend
+    const res = await axios.get(`http://localhost:5000/api/token/keywords`);
+    const mappings = res.data; // Array of { subcategory, jsonFlat, cssVar, ... }
+
+    const outputLines = selectedTokens.map(token => {
+      const match = mappings.find(m => m.subcategory === token.token_subcategory);
+      if (!match || !match[selectedFormat]) return null;
+
+      const keyword = match[selectedFormat];
+      const value = token.token_value;
+      return `${keyword}: ${value};`;
+    }).filter(Boolean); // remove nulls
+
+    const formattedOutput = outputLines.join('\n');
+    setExportOutput(formattedOutput);
+  } catch (err) {
+    console.error("Export failed:", err);
+    setExportOutput("// Failed to generate export");
+  }
+};
+
 
   return (
     <div className="contentWrap">
@@ -100,13 +143,36 @@ function Home() {
         ) : (
           <>
             <div className="top-btn-container">
-              <button className="btn primary-btn" onClick={() => setShowModal(true)}>
-                + Create Token
-              </button>
+              {!isExporting ? (
+                <>
+                  <button className="btn primary-btn" onClick={() => setShowModal(true)}>
+                    + Create Token
+                  </button>
+                  <button className="btn export-btn" onClick={() => setIsExporting(true)}>
+                    Export Tokens
+                  </button>
+                </>
+              ) : (
+                <button className="btn cancel-btn" onClick={() => {
+                  setIsExporting(false);
+                  setSelectedTokens([]);
+                  setExportOutput("");
+                }}>
+                  Cancel Export
+                </button>
+              )}
             </div>
             <div className='tokenList'>
               {tokens.length > 0 ? (
-                tokens.map((t, idx) => <TokenCard key={idx} token={t} />)
+                tokens.map((t, idx) => (
+                  <div
+                    key={idx}
+                    className={`token-select-card ${isExporting && selectedTokens.some(sel => sel.tokenid === t.tokenid) ? 'selected' : ''}`}
+                    onClick={() => isExporting && toggleTokenSelect(t)}
+                  >
+                    <TokenCard token={t} />
+                  </div>
+                ))
               ) : (
                 <p className="setit">No tokens in this project</p>
               )}
@@ -117,7 +183,7 @@ function Home() {
 
       {/* Right Sidebar */}
       <div className='rightside'>
-        {selectedProject?.role === 'Admin' && (
+        {selectedProject?.role === 'Admin' && !isExporting && (
           <button className='btn adduser' onClick={() => setShowAddMember(true)}>+ Add Member</button>
         )}
         <h3 className="member-header">Members</h3>
@@ -133,9 +199,41 @@ function Home() {
             <p className="setit">No members found</p>
           )}
         </ul>
+
+        {isExporting && (
+          <div className="export-overlay">
+            <h4>Export Format</h4>
+            <select
+              className="format-dropdown"
+              value={selectedFormat}
+              onChange={(e) => setSelectedFormat(e.target.value)}
+            >
+              <option value="">Select format</option>
+              {exportFormats.map((format, idx) => (
+                <option key={idx} value={format}>{format}</option>
+              ))}
+            </select>
+            <button
+              className="btn export-btn"
+              onClick={handleExport}
+              disabled={selectedTokens.length === 0 || !selectedFormat}
+            >
+              Export
+            </button>
+
+            {exportOutput && (
+              <textarea
+                className="export-output"
+                rows={8}
+                value={exportOutput}
+                readOnly
+              />
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Create Token Modal */}
+      {/* Modals */}
       {showModal && selectedProject && (
         <CreateTokenModal
           projectId={selectedProject.projectid}
@@ -146,7 +244,6 @@ function Home() {
         />
       )}
 
-      {/* Add Member Modal */}
       {showAddMember && selectedProject && (
         <AddMemberModal
           projectId={selectedProject.projectid}

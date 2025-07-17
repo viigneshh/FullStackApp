@@ -141,3 +141,37 @@
   border: 1px solid #e5e7eb;
   font-size: 14px;
 }
+.token-select-card {
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.3s;
+}
+
+.token-select-card.selected {
+  border: 2px solid #a480dd;
+  background-color: #f2ecff;
+}
+
+.export-overlay {
+  margin-top: 20px;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+}
+
+.format-dropdown {
+  width: 100%;
+  padding: 6px;
+  margin: 10px 0;
+}
+
+.export-output {
+  width: 100%;
+  margin-top: 10px;
+  font-family: monospace;
+  background: #f9f9f9;
+  border: 1px solid #aaa;
+  padding: 8px;
+  border-radius: 4px;
+}

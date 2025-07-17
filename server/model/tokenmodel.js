@@ -12,7 +12,13 @@ const getTokens={
     getSubcategories: (callback) => {
         const query = 'SELECT subcategory, jsonNested FROM token_export_keywords';
         db.query(query, callback);
-        }
+        },
+    getExportKeywords: (callback) => {
+  const query = 'SELECT * FROM token_export_keywords';
+  db.query(query, callback);
+}
+
+
 };
 
 module.exports=getTokens;
