@@ -52,6 +52,7 @@ export default function CreateTokenModal({ projectId, onClose }) {
           <div className="autocomplete-container">
             <input
               type="text"
+              className="inputBox"
               placeholder="Enter or search subcategory"
               value={subcategory}
               onChange={e => {
@@ -64,7 +65,7 @@ export default function CreateTokenModal({ projectId, onClose }) {
             {showDropdown && filteredSubs.length > 0 && (
               <ul className="autocomplete-list">
                 {filteredSubs.map((sub, i) => (
-                  <li key={i} onClick={() => handleSelectSub(sub)}>
+                  <li key={i} onMouseDown={() => handleSelectSub(sub)}>
                     {sub}
                   </li>
                 ))}
