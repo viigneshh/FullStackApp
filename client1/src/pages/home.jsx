@@ -28,6 +28,8 @@ function Home() {
   const [selectedFormat, setSelectedFormat] = useState("");
   const [exportOutput, setExportOutput] = useState("");
 
+  const [showProfile, setShowProfile] = useState(false);
+
   useEffect(() => {
     const loadProjects = async () => {
       if (!user || !user.userid) return;
@@ -90,33 +92,40 @@ function Home() {
   };
 
   const handleExport = async () => {
-  if (!selectedFormat || selectedTokens.length === 0) return;
+    if (!selectedFormat || selectedTokens.length === 0) return;
 
-  try {
-    // Get mappings from backend
-    const res = await axios.get(`http://localhost:5000/api/token/keywords`);
-    const mappings = res.data; // Array of { subcategory, jsonFlat, cssVar, ... }
+    try {
+      const res = await axios.get(`http://localhost:5000/api/token/keywords`);
+      const mappings = res.data;
 
-    const outputLines = selectedTokens.map(token => {
-      const match = mappings.find(m => m.subcategory === token.token_subcategory);
-      if (!match || !match[selectedFormat]) return null;
+      const outputLines = selectedTokens.map(token => {
+        const match = mappings.find(m => m.subcategory === token.token_subcategory);
+        if (!match || !match[selectedFormat]) return null;
 
-      const keyword = match[selectedFormat];
-      const value = token.token_value;
-      return `${keyword}: ${value};`;
-    }).filter(Boolean); // remove nulls
+        const keyword = match[selectedFormat];
+        const value = token.token_value;
+        return `${keyword}: ${value};`;
+      }).filter(Boolean);
 
-    const formattedOutput = outputLines.join('\n');
-    setExportOutput(formattedOutput);
-  } catch (err) {
-    console.error("Export failed:", err);
-    setExportOutput("// Failed to generate export");
-  }
-};
-
+      setExportOutput(outputLines.join('\n'));
+    } catch (err) {
+      console.error("Export failed:", err);
+      setExportOutput("// Failed to generate export");
+    }
+  };
 
   return (
     <div className="contentWrap">
+      {/* Top Profile Icon */}
+      <div className="topbar">
+        <img
+          src="/profile-icon.png"
+          alt="Profile"
+          className="profile-icon"
+          onClick={() => setShowProfile(true)}
+        />
+      </div>
+
       {/* Left Sidebar */}
       <div className="leftDis">
         <input className='searchin' type='text' placeholder='Search project' />
@@ -250,6 +259,20 @@ function Home() {
           onClose={() => setShowAddMember(false)}
           onMemberAdded={() => fetchMembers(selectedProject.projectid)}
         />
+      )}
+
+      {/* Profile Panel */}
+      {showProfile && (
+        <>
+          <div className="overlay" onClick={() => setShowProfile(false)}></div>
+          <div className="profile-slider">
+            <button className="close-btn" onClick={() => setShowProfile(false)}>×</button>
+            <h3>Profile</h3>
+            <p><strong>Name:</strong> {user?.username}</p>
+            <p><strong>Email:</strong> {user?.email}</p>
+            <p><strong>User ID:</strong> {user?.userid}</p>
+          </div>
+        </>
       )}
     </div>
   );
