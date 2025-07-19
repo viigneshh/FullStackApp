@@ -63,6 +63,21 @@ function addUserToProject(userid, projectid, role, callback) {
         }
     );
 }
+// Remove a user from a project
+const removeUserFromProject = (userid, projectid, callback) => {
+  const sql = `DELETE FROM user_v_pro WHERE userid = ? AND project_id = ?`;
+
+  db.query(sql, [userid, projectid], (err, result) => {
+    if (err) return callback(err);
+
+    if (result.affectedRows === 0) {
+      return callback(null, { message: 'No user found in project or already removed' });
+    }
+
+    callback(null, { message: 'User removed from project successfully' });
+  });
+};
+
 
 // Export both functions
 module.exports = {
@@ -70,5 +85,6 @@ module.exports = {
     searchUserByMail,
     getusers,
     getUserbyId,
-    addUserToProject
+    addUserToProject,
+    removeUserFromProject
 };

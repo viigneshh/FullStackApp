@@ -116,7 +116,6 @@ function Home() {
 
   return (
     <div className="contentWrap">
-      {/* Top Profile Icon */}
       <div className="topbar">
         <img
           src="/profile-icon.png"
@@ -126,7 +125,6 @@ function Home() {
         />
       </div>
 
-      {/* Left Sidebar */}
       <div className="leftDis">
         <input className='searchin' type='text' placeholder='Search project' />
         <ul className="listpfPro">
@@ -138,12 +136,34 @@ function Home() {
             >
               <p>Name: {pro.projectname}</p>
               <p>Role: {pro.role}</p>
+                {!isExporting && (selectedProject?.role === 'Admin') && (      
+                      <button
+                        className="btn danger-btn"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (window.confirm("Are you sure you want to delete this project?")) {
+                            try {
+                              await axios.delete(`http://localhost:5000/api/project/${pro.projectid}`);
+                              if (selectedProject?.projectid === pro.projectid) {
+                                setSelectedProject(null);
+                                setTokens([]);
+                                setMemberlist([]);
+                              }
+                              const res = await axios.get(`http://localhost:5000/api/user/${user.userid}/projects`);
+                              setProjects(res.data);
+                            } catch (err) {
+                              console.error("Failed to delete project:", err);
+                            }
+                          }
+                        }}
+                      >Delete</button>
+                )}
+                      
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Center Content */}
       <div className="centerDis">
         {!selectedProject ? (
           <button className="createpro" onClick={() => navigate('/project/create')}>
@@ -180,6 +200,22 @@ function Home() {
                     onClick={() => isExporting && toggleTokenSelect(t)}
                   >
                     <TokenCard token={t} />
+                    {!isExporting && (selectedProject?.role === 'Admin' || selectedProject?.role === 'Editor') && (
+                      <button
+                        className="btn small danger delete-token"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (window.confirm("Delete this token?")) {
+                            try {
+                              await axios.delete(`http://localhost:5000/api/token/delete/${t.tokenid}`);
+                              fetchTokens(selectedProject.projectid);
+                            } catch (err) {
+                              console.error("Failed to delete token:", err);
+                            }
+                          }
+                        }}
+                      >×</button>
+                    )}
                   </div>
                 ))
               ) : (
@@ -190,9 +226,8 @@ function Home() {
         )}
       </div>
 
-      {/* Right Sidebar */}
       <div className='rightside'>
-        {selectedProject?.role === 'Admin' && !isExporting && (
+        {selectedProject && !isExporting && (
           <button className='btn adduser' onClick={() => setShowAddMember(true)}>+ Add Member</button>
         )}
         <h3 className="member-header">Members</h3>
@@ -202,6 +237,21 @@ function Home() {
               <li key={idx} className="member-item">
                 <strong>{m.username}</strong><br />
                 <span style={{ fontSize: '13px', color: '#555' }}>{m.email}</span>
+                {m.userid !== user.userid && (
+                  <button
+                    className="btn small danger"
+                    onClick={async () => {
+                      if (window.confirm(`Remove ${m.username} from project?`)) {
+                        try {
+                          await axios.delete(`http://localhost:5000/api/members/${selectedProject.projectid}/${m.userid}`);
+                          fetchMembers(selectedProject.projectid);
+                        } catch (err) {
+                          console.error("Failed to remove member:", err);
+                        }
+                      }
+                    }}
+                  >Remove</button>
+                )}
               </li>
             ))
           ) : (
@@ -242,7 +292,6 @@ function Home() {
         )}
       </div>
 
-      {/* Modals */}
       {showModal && selectedProject && (
         <CreateTokenModal
           projectId={selectedProject.projectid}
@@ -261,7 +310,6 @@ function Home() {
         />
       )}
 
-      {/* Profile Panel */}
       {showProfile && (
         <>
           <div className="overlay" onClick={() => setShowProfile(false)}></div>
