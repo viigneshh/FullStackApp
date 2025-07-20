@@ -207,7 +207,7 @@ function Home() {
                           e.stopPropagation();
                           if (window.confirm("Delete this token?")) {
                             try {
-                              await axios.delete(`http://localhost:5000/api/token/delete/${t.tokenid}`);
+                              await axios.delete(`http://localhost:5000/api/token/${t.tokenid}`);
                               fetchTokens(selectedProject.projectid);
                             } catch (err) {
                               console.error("Failed to delete token:", err);

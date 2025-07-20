@@ -49,3 +49,12 @@ exports.getExportKeywords = (req, res) => {
     res.status(200).json(results);
   });
 };
+
+exports.DeleteTokens=(req,res)=>{
+   const tokenid=req.params.tid;
+   GetTokens1.deletetkn(tokenid,(err,results)=>{
+    if(err){return res.status(500).json({message:'Db error'})};
+    return res.status(200).json({message:'Token deleted successfully'} )
+   });
+
+};

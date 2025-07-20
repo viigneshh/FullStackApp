@@ -25,7 +25,7 @@ const getTokens = {
   },
 
  
-  delete: (tokenid, callback) => {
+  deletetkn: (tokenid, callback) => {
     const query = 'DELETE FROM tokens WHERE tokenid = ?';
     db.query(query, [tokenid], callback);
   }

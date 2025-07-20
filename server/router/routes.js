@@ -9,9 +9,10 @@ const proControl = require('../controller/projectcontrol');
 router.post('/project/add-member',userControl.addProject);
 router.get('/members/:id', userControl.getUsersOfProject);
 router.get('/member/:id', userControl.getUserById1);
-router.get('/tokens/:id', tokencontroller.getTkn);
+router.get('/tokens/:id', tokencontroller.getTkn);// Get all tokens for a project
 router.post('/token',tokencontroller.createTkn);
 router.get('/token/subcategories',tokencontroller.getSubcategories);
+router.delete('/token/:tid',tokencontroller.DeleteTokens);// Delete a token by ID
 
 // Auth
 router.post('/login', userControl.login);
