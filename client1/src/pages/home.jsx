@@ -243,7 +243,8 @@ function Home() {
                     onClick={async () => {
                       if (window.confirm(`Remove ${m.username} from project?`)) {
                         try {
-                          await axios.delete(`http://localhost:5000/api/members/${selectedProject.projectid}/${m.userid}`);
+                          await axios.delete(`http://localhost:5000/api/members/${selectedProject.projectid}/${m.user_id}`);
+                          
                           fetchMembers(selectedProject.projectid);
                         } catch (err) {
                           console.error("Failed to remove member:", err);

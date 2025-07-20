@@ -24,6 +24,7 @@ router.get('/user/:userid/projects', proControl.getProjectsForUser);
 router.get('/verify', userControl.verifyToken);
 router.get('/token/keywords', tokencontroller.getExportKeywords);
 router.delete('/project/:projectid', proControl.deleteProjectById);
+router.delete('/members/:pid/:uid', userControl.kickMember); // Kick a member from a project
 
 
 module.exports = router;

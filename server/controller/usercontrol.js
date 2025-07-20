@@ -1,4 +1,4 @@
-const { createUser, searchUserByMail,getusers,getUserbyId,addUserToProject } = require('../model/usermodel');
+const { createUser, searchUserByMail,getusers,getUserbyId,addUserToProject, removeUserFromProject } = require('../model/usermodel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { get } = require('../router/routes');
@@ -93,8 +93,22 @@ const addProject=(req, res) => {
     addUserToProject(userid, projectid, role, (err, results) => {
         if (err) return res.status(500).json({ message: 'Database error' });
         res.status(201).json({ message: 'User added to project successfully', data: results });
+    });}
+const kickMember = (req, res) => {
+    const { pid, uid } = req.params; // ✅ use params, not body
+
+    removeUserFromProject(uid, pid, (err, result) => {
+        if (err) return res.status(500).json({ message: 'Database error' });
+
+        if (result.message === 'No user found in project or already removed') {
+            return res.status(404).json({ message: result.message });
+        }
+
+        res.status(200).json({ message: 'User removed from project successfully' });
     });
-}
+};
+
+
 
 module.exports = {
     register,
@@ -102,5 +116,6 @@ module.exports = {
     verifyToken,
     getUsersOfProject,
     getUserById1,
-    addProject
+    addProject,
+    kickMember
 };
