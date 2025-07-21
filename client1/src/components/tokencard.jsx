@@ -8,29 +8,36 @@ function TokenCard({ token }) {
     boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)',
     display: 'flex',
     flexDirection: 'column',
+    gap: '8px',
+  };
+
+  const rowStyle = {
+    display: 'flex',
+    gap: '6px',
+    fontSize: '15px',
+    color: '#111827',
   };
 
   const labelStyle = {
     fontWeight: '600',
     color: '#374151',
-    fontSize: '14px',
-  };
-
-  const valueStyle = {
-    marginBottom: '8px',
-    color: '#111827',
-    fontSize: '15px',
+    minWidth: '90px',
   };
 
   return (
     <div style={cardStyle}>
-       <div style={labelStyle}>Name:</div>
-      <div style={valueStyle}>{token.token_name}</div>
-      <div style={labelStyle}>Category:</div>
-      <div style={valueStyle}>{token.token_category}</div>
-      <div style={labelStyle}>Subcategory:</div>
-      <div style={valueStyle}>{token.token_subcategory}</div>
-      
+      <div style={rowStyle}>
+        <span style={labelStyle}>Name:</span>
+        <span>{token.token_name}</span>
+      </div>
+      <div style={rowStyle}>
+        <span style={labelStyle}>Category:</span>
+        <span>{token.token_category}</span>
+      </div>
+      <div style={rowStyle}>
+        <span style={labelStyle}>Subcategory:</span>
+        <span>{token.token_subcategory}</span>
+      </div>
     </div>
   );
 }

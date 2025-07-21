@@ -113,6 +113,16 @@ function Home() {
       setExportOutput("// Failed to generate export");
     }
   };
+  const groupTokensByCategory = (tokens) => {
+  const grouped = {};
+  tokens.forEach((token) => {
+    const cat = token.token_category || 'Uncategorized';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(token);
+  });
+  return grouped;
+};
+
 
   return (
     <div className="contentWrap">
@@ -124,7 +134,7 @@ function Home() {
           onClick={() => setShowProfile(true)}
         />
       </div>
-
+{/*----------------------------------------------------------------------------------------------------------------------------------------*/}
       <div className="leftDis">
         <input className='searchin' type='text' placeholder='Search project' />
         <ul className="listpfPro">
@@ -163,69 +173,87 @@ function Home() {
           ))}
         </ul>
       </div>
-
+{/*----------------------------------------------------------------------------------------------------------------------------------------*/}
       <div className="centerDis">
-        {!selectedProject ? (
-          <button className="createpro" onClick={() => navigate('/project/create')}>
-            Create New Project
-          </button>
-        ) : (
+  {!selectedProject ? (
+    <button className="createpro" onClick={() => navigate('/project/create')}>
+      Create New Project
+    </button>
+  ) : (
+    <>
+      <div className="top-btn-container">
+        {!isExporting ? (
           <>
-            <div className="top-btn-container">
-              {!isExporting ? (
-                <>
-                  <button className="btn primary-btn" onClick={() => setShowModal(true)}>
-                    + Create Token
-                  </button>
-                  <button className="btn export-btn" onClick={() => setIsExporting(true)}>
-                    Export Tokens
-                  </button>
-                </>
-              ) : (
-                <button className="btn cancel-btn" onClick={() => {
-                  setIsExporting(false);
-                  setSelectedTokens([]);
-                  setExportOutput("");
-                }}>
-                  Cancel Export
-                </button>
-              )}
-            </div>
-            <div className='tokenList'>
-              {tokens.length > 0 ? (
-                tokens.map((t, idx) => (
-                  <div
-                    key={idx}
-                    className={`token-select-card ${isExporting && selectedTokens.some(sel => sel.tokenid === t.tokenid) ? 'selected' : ''}`}
-                    onClick={() => isExporting && toggleTokenSelect(t)}
-                  >
-                    <TokenCard token={t} />
-                    {!isExporting && (selectedProject?.role === 'Admin' || selectedProject?.role === 'Editor') && (
-                      <button
-                        className="btn small danger delete-token"
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          if (window.confirm("Delete this token?")) {
-                            try {
-                              await axios.delete(`http://localhost:5000/api/token/${t.tokenid}`);
-                              fetchTokens(selectedProject.projectid);
-                            } catch (err) {
-                              console.error("Failed to delete token:", err);
-                            }
-                          }
-                        }}
-                      >×</button>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <p className="setit">No tokens in this project</p>
-              )}
-            </div>
+            <button className="btn primary-btn" onClick={() => setShowModal(true)}>
+              + Create Token
+            </button>
+            <button className="btn export" onClick={() => setIsExporting(true)}>
+              Export Tokens
+            </button>
           </>
+        ) : (
+          <button
+            className="btn cancel-btn"
+            onClick={() => {
+              setIsExporting(false);
+              setSelectedTokens([]);
+              setExportOutput("");
+            }}
+          >
+            Cancel Export
+          </button>
         )}
       </div>
 
+      <div className="tokenList">
+        {tokens.length > 0 ? (
+          Object.entries(groupTokensByCategory(tokens)).map(([category, catTokens], idx) => (
+            <div key={idx} className="token-category-group">
+              <h4 className="token-category-title">{category}</h4>
+              <div className="token-row-scroll">
+                {catTokens.map((t, i) => (
+                  <div
+                    key={i}
+                    className={`token-select-card ${
+                      isExporting && selectedTokens.some(sel => sel.tokenid === t.tokenid)
+                        ? "selected"
+                        : ""
+                    }`}
+                    onClick={() => isExporting && toggleTokenSelect(t)}
+                  >
+                    <TokenCard token={t} />
+                    {!isExporting &&
+                      (selectedProject?.role === "Admin" || selectedProject?.role === "Editor") && (
+                        <button
+                          className="btn small danger delete-token"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (window.confirm("Delete this token?")) {
+                              try {
+                                await axios.delete(`http://localhost:5000/api/token/${t.tokenid}`);
+                                fetchTokens(selectedProject.projectid);
+                              } catch (err) {
+                                console.error("Failed to delete token:", err);
+                              }
+                            }
+                          }}
+                        >
+                          ×
+                        </button>
+                      )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="setit">No tokens in this project</p>
+        )}
+      </div>
+    </>
+  )}
+</div>
+{/*----------------------------------------------------------------------------------------------------------------------------------------*/}
       <div className='rightside'>
         {selectedProject && !isExporting && (
           <button className='btn adduser' onClick={() => setShowAddMember(true)}>+ Add Member</button>
@@ -239,7 +267,7 @@ function Home() {
                 <span style={{ fontSize: '13px', color: '#555' }}>{m.email}</span>
                 {m.userid !== user.userid && (
                   <button
-                    className="btn small danger"
+                    className="btn move-it"
                     onClick={async () => {
                       if (window.confirm(`Remove ${m.username} from project?`)) {
                         try {
@@ -274,7 +302,7 @@ function Home() {
               ))}
             </select>
             <button
-              className="btn export-btn"
+              className="btn"
               onClick={handleExport}
               disabled={selectedTokens.length === 0 || !selectedFormat}
             >
@@ -292,7 +320,7 @@ function Home() {
           </div>
         )}
       </div>
-
+{/*----------------------------------------------------------------------------------------------------------------------------------------*/}  
       {showModal && selectedProject && (
         <CreateTokenModal
           projectId={selectedProject.projectid}

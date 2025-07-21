@@ -1,10 +1,12 @@
+/* =================== GLOBAL LAYOUT =================== */
 .contentWrap {
   display: flex;
   height: calc(100vh - 64px);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
 }
 
-/* Left column */
+/* =================== LEFT SIDEBAR =================== */
 .leftDis {
   width: 20%;
   background: #f3f4f6;
@@ -37,7 +39,7 @@
   font-weight: 500;
 }
 
-/* Center area */
+/* =================== CENTER CONTENT =================== */
 .centerDis {
   display: flex;
   flex-direction: column;
@@ -45,6 +47,7 @@
   gap: 20px;
   padding: 20px;
   width: 55%;
+  overflow-y: scroll; /* Enables scroll within center area */
 }
 
 .top-btn-container {
@@ -54,30 +57,11 @@
   margin-bottom: 16px;
 }
 
-.btn {
-  padding: 10px 16px;
-  font-weight: 600;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.primary-btn {
-  background-color: #2563eb;
-  color: white;
-  position: absolute;
-  left: 50%;
-}
 .tokenList {
   width: 100%;
   display: flex;
-
-  gap: 16px;
-}
-
-.primary-btn:hover {
-  background-color: #1d4ed8;
+  flex-direction: column;
+  gap: 0px; /* Space between token category rows */
 }
 
 .createpro {
@@ -99,7 +83,8 @@
   font-style: italic;
   margin-top: 20px;
 }
-/* Right Sidebar */
+
+/* =================== RIGHT SIDEBAR =================== */
 .rightside {
   width: 25%;
   background: #f9fafb;
@@ -141,6 +126,8 @@
   border: 1px solid #e5e7eb;
   font-size: 14px;
 }
+
+/* =================== TOKEN SELECT & EXPORT =================== */
 .token-select-card {
   cursor: pointer;
   border: 2px solid transparent;
@@ -175,6 +162,8 @@
   padding: 8px;
   border-radius: 4px;
 }
+
+/* =================== TOPBAR & PROFILE ICON =================== */
 .topbar {
   position: absolute;
   top: 10px;
@@ -189,6 +178,7 @@
   cursor: pointer;
 }
 
+/* =================== PROFILE OVERLAYS =================== */
 .overlay {
   position: fixed;
   top: 0;
@@ -214,13 +204,6 @@
   gap: 12px;
 }
 
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  align-self: flex-end;
-  cursor: pointer;
-}
 .profile-panel {
   position: absolute;
   top: 60px;
@@ -272,6 +255,7 @@
   background-color: #dc2626;
 }
 
+/* =================== ANIMATIONS =================== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -282,7 +266,49 @@
     transform: translateY(0);
   }
 }
-/* ===== Project Card Styles ===== */
+
+/* =================== BUTTONS =================== */
+.btn {
+  padding: 10px 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.move-it{
+  margin-left: 70%;
+}
+.export{
+  position: fixed;
+}
+.primary-btn {
+  background-color: #2563eb;
+  color: white;
+  position: absolute;
+  left: 50%;
+}
+
+.primary-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.delete-btn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+
+/* =================== PROJECT CARDS =================== */
 .project-card {
   background-color: #ffffff;
   padding: 1rem;
@@ -303,30 +329,13 @@
   color: #6b7280;
 }
 
-/* ===== Delete Button Common Styles ===== */
-.delete-btn {
-  background-color: #ef4444;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  font-size: 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.delete-btn:hover {
-  background-color: #dc2626;
-}
-
-/* ===== Delete Button Position (Top Right on Project Card) ===== */
 .project-card .delete-btn {
   position: absolute;
   top: 10px;
   right: 10px;
 }
 
-/* ===== Token List Item ===== */
+/* =================== TOKEN ROWS & CATEGORIES =================== */
 .token-item {
   background-color: #f9fafb;
   padding: 0.5rem 0.75rem;
@@ -347,38 +356,40 @@
   gap: 8px;
 }
 
-/* ===== Member List Item ===== */
-.member-item {
-  background-color: #f9fafb;
-  padding: 0.5rem 0.75rem;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.token-category-group {
+  margin-bottom: 32px;
+  width: 100%;
 }
 
-.member-name {
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
-.member-actions {
-  display: flex;
-  gap: 8px;
-}
-
-/* ===== Section Titles ===== */
-.section-title {
-  font-size: 1.1rem;
+.token-category-title {
+  font-size: 18px;
   font-weight: 600;
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+  color: #1f2937;
 }
 
-/* ===== Responsive Wrapper for Cards ===== */
+.token-row-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.token-row-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.token-row-scroll::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 8px;
+}
+
+/* =================== RESPONSIVE GRID =================== */
 .cards-wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 1rem;
 }
