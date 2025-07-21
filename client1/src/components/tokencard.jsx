@@ -24,10 +24,13 @@ function TokenCard({ token }) {
 
   return (
     <div style={cardStyle}>
+       <div style={labelStyle}>Name:</div>
+      <div style={valueStyle}>{token.token_name}</div>
       <div style={labelStyle}>Category:</div>
       <div style={valueStyle}>{token.token_category}</div>
       <div style={labelStyle}>Subcategory:</div>
       <div style={valueStyle}>{token.token_subcategory}</div>
+      
     </div>
   );
 }

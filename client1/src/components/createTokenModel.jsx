@@ -1,4 +1,3 @@
-// src/components/CreateTokenModal.jsx
 import '../css/createtoken.css';
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -8,6 +7,7 @@ export default function CreateTokenModal({ projectId, onClose }) {
   const [category, setCategory] = useState('');
   const [subcategory, setSubcategory] = useState('');
   const [value, setValue] = useState('');
+  const [tokenName, setTokenName] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
 
   const categories = Object.keys(SUBCATEGORIES);
@@ -16,13 +16,15 @@ export default function CreateTokenModal({ projectId, onClose }) {
   );
 
   const handleSubmit = async () => {
-    if (!category || !subcategory || !value) return alert('Please fill all fields');
+    if (!category || !subcategory || !value || !tokenName)
+      return alert('Please fill all fields');
     try {
       await axios.post('http://localhost:5000/api/token', {
         projectid: projectId,
         token_category: category,
         token_subcategory: subcategory,
-        token_value: value
+        token_value: value,
+        token_name: tokenName
       });
       alert('Token created');
       onClose();
@@ -40,6 +42,15 @@ export default function CreateTokenModal({ projectId, onClose }) {
     <div className="modalOverlay">
       <div className="modalContainer">
         <h2 className="modalTitle">Create Token</h2>
+
+        
+        <input
+          type="text"
+          className="inputBox"
+          placeholder="Token Name (e.g. title-card-bg-color)"
+          value={tokenName}
+          onChange={e => setTokenName(e.target.value)}
+        />
 
         <select value={category} onChange={e => setCategory(e.target.value)} className="dropdownInput">
           <option value="">Select Category</option>
@@ -81,6 +92,7 @@ export default function CreateTokenModal({ projectId, onClose }) {
           value={value}
           onChange={e => setValue(e.target.value)}
         />
+
 
         <div className="btnRow">
           <button className="cancelBtn" onClick={onClose}>Cancel</button>

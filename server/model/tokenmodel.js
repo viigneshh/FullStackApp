@@ -6,10 +6,10 @@ const getTokens = {
   },
 
   create: (data, callback) => {
-    const { projectid, token_category, token_subcategory, token_value } = data;
+    const { projectid, token_category, token_subcategory, token_value, token_name } = data;
     db.query(
-      'INSERT INTO tokens (projectid, token_category, token_subcategory, token_value) VALUES (?, ?, ?, ?)',
-      [projectid, token_category, token_subcategory, token_value],
+      'INSERT INTO tokens (projectid, token_category, token_subcategory, token_value, token_name) VALUES (?, ?, ?, ?, ?)',
+      [projectid, token_category, token_subcategory, token_value, token_name],
       callback
     );
   },

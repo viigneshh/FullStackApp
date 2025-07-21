@@ -12,32 +12,48 @@
 }
 
 .modalContainer {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
+  background: #ffffff;
+  padding: 28px 24px;
+  border-radius: 14px;
   width: 90%;
-  max-width: 400px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  animation: popFade 0.25s ease;
+}
+
+@keyframes popFade {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .modalTitle {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   text-align: center;
+  color: #1f2937;
 }
 
-.dropdownInput, .inputBox {
+.dropdownInput,
+.inputBox {
   width: 100%;
-  padding: 10px 14px;
+  padding: 12px 14px;
   font-size: 15px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   outline: none;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.dropdownInput:focus, .inputBox:focus {
+.dropdownInput:focus,
+.inputBox:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
@@ -51,7 +67,7 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: #fff;
+  background: #ffffff;
   border: 1px solid #e5e7eb;
   border-top: none;
   max-height: 200px;
@@ -76,22 +92,34 @@
 .btnRow {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-.cancelBtn, .submitBtn {
-  padding: 8px 16px;
+.cancelBtn,
+.submitBtn {
+  padding: 10px 18px;
   font-size: 14px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .cancelBtn {
   background: #e5e7eb;
+  color: #111827;
+}
+
+.cancelBtn:hover {
+  background: #d1d5db;
 }
 
 .submitBtn {
   background: #2563eb;
   color: white;
+}
+
+.submitBtn:hover {
+  background: #1e40af;
 }
