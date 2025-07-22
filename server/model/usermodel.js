@@ -1,90 +1,49 @@
 const db = require('../config/db');
 
-// Function to create a user
-function createUser(name, email, hashedpass, callback) {
-    db.query(
-        'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-        [name, email, hashedpass],
-        (err, results) => {
-            if (err) {
-                console.log(`Couldn't insert due to: ${err}`);
-                return callback(err, null);
-            }
-            return callback(null, results);
-        }
-    );
+async function createUser(name, email, hashedpass) {
+  const [results] = await db.query(
+    'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+    [name, email, hashedpass]
+  );
+  return results;
 }
 
-// Function to search for a user by email
-function searchUserByMail(email, callback) {
-    db.query(
-        'SELECT * FROM users WHERE email = ?',
-        [email],
-        (err, results) => {
-            if (err) {
-                console.log(`Couldn't search due to: ${err}`);
-                return callback(err, null);
-            }
-            return callback(null, results);
-        }
-    );
+async function searchUserByMail(email) {
+  const [results] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+  return results;
 }
-function getusers(projectid, callback) {
-    db.query( 'select userid from user_v_pro where project_id=?',[projectid],(err, results) => {
-        if (err) {
-            console.log(`Couldn't get users due to: ${err}`);
-            return callback(err, null);
-        }
-        return callback(null, results);
-});}
-function getUserbyId(userid, callback) {
-    db.query(
-        'SELECT * FROM users WHERE user_id = ?',
-        [userid],
-        (err, results) => {
-            if (err) {
-                console.log(`Couldn't get user by ID due to: ${err}`);
-                return callback(err, null);
-            }
-            return callback(null, results);
-        }
-    );
+
+async function getusers(projectid) {
+  const [results] = await db.query('SELECT userid FROM user_v_pro WHERE project_id = ?', [projectid]);
+  return results;
 }
-function addUserToProject(userid, projectid, role, callback) {
-    db.query(
-        'INSERT INTO user_v_pro (userid, project_id, role) VALUES (?, ?, ?)',
-        [userid, projectid, role],
-        (err, results) => {
-            if (err) {
-                console.log(`Couldn't add user to project due to: ${err}`);
-                return callback(err, null);
-            }
-            return callback(null, results);
-        }
-    );
+
+async function getUserbyId(userid) {
+  const [results] = await db.query('SELECT * FROM users WHERE user_id = ?', [userid]);
+  return results;
 }
-// Remove a user from a project
-const removeUserFromProject = (userid, projectid, callback) => {
-  const sql = `DELETE FROM user_v_pro WHERE userid = ? AND project_id = ?`;
 
-  db.query(sql, [userid, projectid], (err, result) => {
-    if (err) return callback(err);
+async function addUserToProject(userid, projectid, role) {
+  const [results] = await db.query(
+    'INSERT INTO user_v_pro (userid, project_id, role) VALUES (?, ?, ?)',
+    [userid, projectid, role]
+  );
+  return results;
+}
 
-    if (result.affectedRows === 0) {
-      return callback(null, { message: 'No user found in project or already removed' });
-    }
+async function removeUserFromProject(userid, projectid) {
+  const [result] = await db.query('DELETE FROM user_v_pro WHERE userid = ? AND project_id = ?', [userid, projectid]);
+  if (result.affectedRows === 0) {
+    return { message: 'No user found in project or already removed' };
+  }
+  return { message: 'User removed from project successfully' };
+}
 
-    callback(null, { message: 'User removed from project successfully' });
-  });
-};
-
-
-// Export both functions
 module.exports = {
-    createUser,
-    searchUserByMail,
-    getusers,
-    getUserbyId,
-    addUserToProject,
-    removeUserFromProject
+  createUser,
+  searchUserByMail,
+  getusers,
+  getUserbyId,
+  addUserToProject,
+  removeUserFromProject
 };

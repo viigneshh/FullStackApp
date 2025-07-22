@@ -1,33 +1,33 @@
 const db = require('../config/db');
 
 const getTokens = {
-  getall: (id, callback) => {
-    db.query('SELECT * FROM tokens WHERE projectid = ?', [id], callback);
+  getall: async (id) => {
+    const [results] = await db.query('SELECT * FROM tokens WHERE projectid = ?', [id]);
+    return results;
   },
 
-  create: (data, callback) => {
+  create: async (data) => {
     const { projectid, token_category, token_subcategory, token_value, token_name } = data;
-    db.query(
+    const [result] = await db.query(
       'INSERT INTO tokens (projectid, token_category, token_subcategory, token_value, token_name) VALUES (?, ?, ?, ?, ?)',
-      [projectid, token_category, token_subcategory, token_value, token_name],
-      callback
+      [projectid, token_category, token_subcategory, token_value, token_name]
     );
+    return result;
   },
 
-  getSubcategories: (callback) => {
-    const query = 'SELECT subcategory, jsonNested FROM token_export_keywords';
-    db.query(query, callback);
+  getSubcategories: async () => {
+    const [results] = await db.query('SELECT subcategory, jsonNested FROM token_export_keywords');
+    return results;
   },
 
-  getExportKeywords: (callback) => {
-    const query = 'SELECT * FROM token_export_keywords';
-    db.query(query, callback);
+  getExportKeywords: async () => {
+    const [results] = await db.query('SELECT * FROM token_export_keywords');
+    return results;
   },
 
- 
-  deletetkn: (tokenid, callback) => {
-    const query = 'DELETE FROM tokens WHERE tokenid = ?';
-    db.query(query, [tokenid], callback);
+  deletetkn: async (tokenid) => {
+    const [result] = await db.query('DELETE FROM tokens WHERE tokenid = ?', [tokenid]);
+    return result;
   }
 };
 
