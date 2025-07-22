@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('../config/passport');
+
 
 const tokencontroller = require('../controller/tokencontrol');
 const userControl = require('../controller/usercontrol');
@@ -26,5 +28,22 @@ router.get('/token/keywords', tokencontroller.getExportKeywords);
 router.delete('/project/:projectid', proControl.deleteProjectById);
 router.delete('/members/:pid/:uid', userControl.kickMember); // Kick a member from a project
 
+
+router.get('/google', passport.authenticate('google', {
+  scope: ['profile', 'email'],
+}));
+
+// Step 2: Handle Google callback
+router.get('/google/callback', passport.authenticate('google', {
+  failureRedirect: 'http://localhost:5173/login',
+  session: false,
+}), (req, res) => {
+  const token = req.user.token;
+  const username = req.user.username;
+  const userid = req.user.userid;
+
+  // Redirect to frontend with query parameters (register/login success)
+  res.redirect(`http://localhost:5173/auth/google/callback?token=${token}&username=${username}&userid=${userid}`);
+});
 
 module.exports = router;

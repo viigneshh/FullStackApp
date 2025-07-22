@@ -23,6 +23,9 @@ function RegisterPage() {
       alert(err.response?.data?.message || 'Registration failed');
     }
   };
+   const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:5000/auth/google';
+  };
 
   return (
     <div className="auth-container">
@@ -46,6 +49,8 @@ function RegisterPage() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handleRegister}>Register</button>
+      <hr style={{ width: '100%', margin: '20px 0' }} />
+      <button onClick={handleGoogleLogin}>Continue with Google</button>
       <p>Already have an account? <a href="/login">Login</a></p>
     </div>
   );
