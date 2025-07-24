@@ -27,6 +27,7 @@ function LoginPage() {
         token,
         userid,
         username,
+        email,
       });
 
       // ✅ Navigate

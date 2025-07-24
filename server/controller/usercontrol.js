@@ -42,7 +42,8 @@ const login = async (req, res) => {
       message: 'Login successful',
       token,
       userid: user.user_id,
-      username: user.username
+      username: user.username,
+      email: user.email
     });
   } catch (err) {
     res.status(500).json({ message: "Unexpected error", err });
